@@ -1,0 +1,44 @@
+version: '3.8'
+volumes:
+  mongovol:
+networks:
+  mongonet:
+    driver: bridge
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      -  27017:27017
+    networks:
+      - mongonet
+    volumes:
+      - mongovol:/app
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+
+  rotten-potatoes:
+    image: midgardhero/rotten-potatoes-desafio7:latest
+    depends_on:
+      - mongo
+    ports:
+      - 5000:5000
+    networks:
+      - mongonet
+    environment:
+      MONGODB_DB: admin
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: mongouser
+      MONGODB_PASSWORD: mongopwd
+  mongo-express:
+    image: mongo-express:latest
+    depends_on:
+      - mongo
+    ports:
+      - 8081:8081
+    networks:
+      - mongonet
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongouser:mongopwd@mongo:27017/

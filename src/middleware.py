@@ -34,4 +34,3 @@ class middleware():
             res = Response(u'UnReady', mimetype= 'text/plain', status=500)
         else:
             return self.app(environ, start_response)
-    
